@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pmsn2024/screens/dashboard_screen.dart';
 import 'package:pmsn2024/screens/splash_screen.dart';
+import 'package:pmsn2024/settings/app_value_notifier.dart';
+import 'package:pmsn2024/settings/theme.dart';
 
 void main() => runApp( MyApp());
 
@@ -8,8 +11,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: SplashScreen(),
+    return ValueListenableBuilder(
+      valueListenable: AppValueNotifier.banTheme,
+      builder: (context, value, child) {
+        return MaterialApp(
+          theme: value 
+            ? ThemeApp.darkTheme(context) 
+            : ThemeApp.lightTheme(context),
+          home: SplashScreen(),
+          routes: {
+            "/dash" : (BuildContext context) => DashboardScreen(),
+            
+          },
+        );
+      }
     );
   }
 }
