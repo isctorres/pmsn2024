@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pmsn2024/screens/dashboard_screen.dart';
+import 'package:pmsn2024/screens/despensa_screen.dart';
 import 'package:pmsn2024/screens/splash_screen.dart';
 import 'package:pmsn2024/settings/app_value_notifier.dart';
 import 'package:pmsn2024/settings/theme.dart';
@@ -15,13 +16,14 @@ class MyApp extends StatelessWidget {
       valueListenable: AppValueNotifier.banTheme,
       builder: (context, value, child) {
         return MaterialApp(
+          debugShowCheckedModeBanner: false,
           theme: value 
             ? ThemeApp.darkTheme(context) 
             : ThemeApp.lightTheme(context),
           home: SplashScreen(),
           routes: {
             "/dash" : (BuildContext context) => DashboardScreen(),
-            
+            "/despensa" : (BuildContext context) => DespensaScreen(),
           },
         );
       }

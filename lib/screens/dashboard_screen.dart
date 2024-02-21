@@ -25,6 +25,13 @@ class DashboardScreen extends StatelessWidget {
               subtitle: Text('Aqui iria la descripcion si tuviera una'),
               trailing: Icon(Icons.chevron_right),
             ),
+             ListTile(
+              leading: Icon(Icons.shop),
+              title: Text('Mi despensa'),
+              subtitle: Text('Relacion de productos que no voy a usar'),
+              trailing: Icon(Icons.chevron_right),
+              onTap: () => Navigator.pushNamed(context, '/despensa'),
+            ),
             ListTile(
               leading: Icon(Icons.close),
               title: Text('Salir'),
