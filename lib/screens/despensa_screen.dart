@@ -24,6 +24,78 @@ class _DespensaScreenState extends State<DespensaScreen> {
   @override
   Widget build(BuildContext context) {
 
+    
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Mi despensa :)'),
+        actions: [
+          IconButton(onPressed: (){
+            showModal(context);
+          }, 
+          icon: Icon(Icons.shop_sharp))
+        ],
+      ),
+      body: ValueListenableBuilder(
+        valueListenable: AppValueNotifier.banProducts,
+        builder: (context,value,_) {
+          return FutureBuilder(
+            future: productsDB!.CONSULTAR(),
+            builder: (context, AsyncSnapshot<List<ProductosModel>> snapshot) {
+              if( snapshot.hasError ){
+                return Center(child: Text('Algo salio mal :('),);
+              }else{
+                if(snapshot.hasData){
+                  return Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return itemDespensa(snapshot.data![index]);
+                      },
+                    ),
+                  );
+                }else{
+                  return Center(child: CircularProgressIndicator());
+                }
+              }
+            },
+          );
+        }
+      ),
+    );
+  }
+
+  Widget itemDespensa(ProductosModel producto){
+    
+    return Container(
+      margin: EdgeInsets.only(top: 10),
+      decoration: BoxDecoration(
+        color: Colors.greenAccent,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.black, width: 2)
+      ),
+      height: 100,
+      child: Column(
+        children: [
+          Text('${producto.nomProducto!}'),
+          Text('${producto.fechaCaducidad!}'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(onPressed: (){
+
+                showModal(context);
+              }, icon: Icon(Icons.edit)),
+              IconButton(onPressed: (){}, icon: Icon(Icons.delete))
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  showModal(context){
+    
     final conNombre = TextEditingController();
     final conCantidad = TextEditingController();
     final conFecha = TextEditingController();
@@ -95,84 +167,23 @@ class _DespensaScreenState extends State<DespensaScreen> {
       },
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Mi despensa :)'),
-        actions: [
-          IconButton(onPressed: (){
-            showModalBottomSheet(
-              context: context, 
-              builder: (context) {
-                return ListView(
-                  padding: EdgeInsets.all(10),
-                  children: [
-                    txtNombre,
-                    space,
-                    txtCantidad,
-                    space,
-                    txtFecha,
-                    space,
-                    btnAgregar
-                  ],
-                );
-              },
-            );
-          }, 
-          icon: Icon(Icons.shop_sharp))
-        ],
-      ),
-      body: ValueListenableBuilder(
-        valueListenable: AppValueNotifier.banProducts,
-        builder: (context,value,_) {
-          return FutureBuilder(
-            future: productsDB!.CONSULTAR(),
-            builder: (context, AsyncSnapshot<List<ProductosModel>> snapshot) {
-              if( snapshot.hasError ){
-                return Center(child: Text('Algo salio mal :('),);
-              }else{
-                if(snapshot.hasData){
-                  return Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        return itemDespensa(snapshot.data![index]);
-                      },
-                    ),
-                  );
-                }else{
-                  return Center(child: CircularProgressIndicator());
-                }
-              }
-            },
-          );
-        }
-      ),
-    );
-  }
-
-  Widget itemDespensa(ProductosModel producto){
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      decoration: BoxDecoration(
-        color: Colors.greenAccent,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.black, width: 2)
-      ),
-      height: 100,
-      child: Column(
-        children: [
-          Text('${producto.nomProducto!}'),
-          Text('${producto.fechaCaducidad!}'),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(onPressed: (){}, icon: Icon(Icons.edit)),
-              IconButton(onPressed: (){}, icon: Icon(Icons.delete))
-            ],
-          )
-        ],
-      ),
+    
+    showModalBottomSheet(
+      context: context, 
+      builder: (context) {
+        return ListView(
+          padding: EdgeInsets.all(10),
+          children: [
+            txtNombre,
+            space,
+            txtCantidad,
+            space,
+            txtFecha,
+            space,
+            btnAgregar
+          ],
+        );
+      },
     );
   }
 }
