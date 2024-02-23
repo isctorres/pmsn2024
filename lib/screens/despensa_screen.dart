@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pmsn2024/database/products_database.dart';
 import 'package:pmsn2024/model/products_model.dart';
+import 'package:pmsn2024/settings/app_value_notifier.dart';
 
 class DespensaScreen extends StatefulWidget {
   const DespensaScreen({super.key});
@@ -53,6 +54,7 @@ class _DespensaScreenState extends State<DespensaScreen> {
           Navigator.pop(context);
           String msj = "";
           if(value>0){
+            AppValueNotifier.banProducts.value = !AppValueNotifier.banProducts.value;
             msj = "Producto Insertado";
           }else{
             msj = "Ocurrio un error :()";
@@ -119,35 +121,56 @@ class _DespensaScreenState extends State<DespensaScreen> {
           icon: Icon(Icons.shop_sharp))
         ],
       ),
-      body: FutureBuilder(
-        future: productsDB!.CONSULTAR(),
-        builder: (context, AsyncSnapshot<List<ProductosModel>> snapshot) {
-          if( snapshot.hasError ){
-            return Center(child: Text('Algo salio mal :('),);
-          }else{
-            if(snapshot.hasData){
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  return itemDespensa(snapshot.data![index]);
-                },
-              );
-            }else{
-              return Center(child: CircularProgressIndicator());
-            }
-          }
-        },
+      body: ValueListenableBuilder(
+        valueListenable: AppValueNotifier.banProducts,
+        builder: (context,value,_) {
+          return FutureBuilder(
+            future: productsDB!.CONSULTAR(),
+            builder: (context, AsyncSnapshot<List<ProductosModel>> snapshot) {
+              if( snapshot.hasError ){
+                return Center(child: Text('Algo salio mal :('),);
+              }else{
+                if(snapshot.hasData){
+                  return Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return itemDespensa(snapshot.data![index]);
+                      },
+                    ),
+                  );
+                }else{
+                  return Center(child: CircularProgressIndicator());
+                }
+              }
+            },
+          );
+        }
       ),
     );
   }
 
   Widget itemDespensa(ProductosModel producto){
     return Container(
+      margin: EdgeInsets.only(top: 10),
+      decoration: BoxDecoration(
+        color: Colors.greenAccent,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.black, width: 2)
+      ),
       height: 100,
       child: Column(
         children: [
           Text('${producto.nomProducto!}'),
           Text('${producto.fechaCaducidad!}'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(onPressed: (){}, icon: Icon(Icons.edit)),
+              IconButton(onPressed: (){}, icon: Icon(Icons.delete))
+            ],
+          )
         ],
       ),
     );
